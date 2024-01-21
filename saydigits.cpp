@@ -8,7 +8,7 @@ if(n==0){
 
 int digit = n%10;
 n=n/10;
-separation(n,arr);
+separation(n,arr); 
 cout<<arr[digit]<<" ";
 
 }
