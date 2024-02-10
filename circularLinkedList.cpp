@@ -1,4 +1,5 @@
 #include <iostream>
+#include <map>
 using namespace std;
 
 class Node
@@ -24,88 +25,182 @@ public:
     }
 };
 
-void insertNode(Node* &tail,int element, int d){
-    if(tail == NULL){
-        Node* newNode = new Node(d);
+void insertNode(Node *&tail, int element, int d)
+{
+    if (tail == NULL)
+    {
+        Node *newNode = new Node(d);
         tail = newNode;
         newNode->next = newNode;
-    }else{
-        Node* curr = tail;
-        while(curr->data != element){
+    }
+    else
+    {
+        Node *curr = tail;
+        while (curr->data != element)
+        {
             curr = curr->next;
         }
-        Node* temp = new Node(d);
+        Node *temp = new Node(d);
         temp->next = curr->next;
         curr->next = temp;
     }
 }
 
-void print(Node* tail){
-    Node* temp = tail;
+void print(Node *tail)
+{
+    Node *temp = tail;
 
-if(tail == NULL){
-    cout<<"List is empty"<<endl;
-    return;
-}
-
-    do{
-    cout<< tail->data <<" ";
-    tail = tail->next;
-    }
-    while(tail!=temp);
-    cout<<endl;
-}
-
-void  deleteNode(Node* &tail,int value){
-    if(tail == NULL){
-        cout<<"List  is empty, Please check again"<<endl;
+    if (tail == NULL)
+    {
+        cout << "List is empty" << endl;
         return;
     }
-    else{
-       Node* prev = tail;
-       Node* curr = prev->next;
 
-       while(curr->data!=value){
-        prev = curr;
-        curr = curr->next;
-       }
-       prev->next = curr->next;
+    do
+    {
+        cout << tail->data << " ";
+        tail = tail->next;
+    } while (tail != temp);
+    cout << endl;
+}
 
-         if(curr==prev){
-            tail = NULL;
-         }
-
-       if(tail == curr){
-        tail = prev;
-       }
-       curr->next = NULL;
-       delete curr;
+void deleteNode(Node *&tail, int value)
+{
+    if (tail == NULL)
+    {
+        cout << "List  is empty, Please check again" << endl;
+        return;
     }
+    else
+    {
+        Node *prev = tail;
+        Node *curr = prev->next;
+
+        while (curr->data != value)
+        {
+            prev = curr;
+            curr = curr->next;
+        }
+        prev->next = curr->next;
+
+        if (curr == prev)
+        {
+            tail = NULL;
+        }
+
+        if (tail == curr)
+        {
+            tail = prev;
+        }
+        curr->next = NULL;
+        delete curr;
+    }
+}
+
+bool  isCircularList(Node* head){
+    if(head == NULL){
+        return true;
+    }
+    Node* temp = head->next;
+    while(temp!=NULL&&temp!=head){
+        temp = temp->next;
+    }
+    if(temp == head){
+        return true;
+    }
+    return false;
+}
+
+bool detectLoop(Node* head){
+    if(head == NULL){
+        return false;
+    }
+    map<Node*, bool> visited;
+    Node* temp = head;
+    while(temp!=NULL){
+        if(visited[temp] == true){
+            return true;
+        }
+        visited[temp] = true;
+        temp = temp->next;
+    }
+    return false;
+}
+
+Node* floydDetectLoop(Node* head){
+    if(head==NULL){
+        return NULL;
+    }
+    Node* slow = head;
+    Node* fast = head;
+    while(slow!= NULL && fast!=NULL){
+        fast = fast->next;
+        if(fast!=NULL){
+            fast = fast->next;
+        }
+        slow = slow->next;
+        if(slow == fast){
+            cout<<"Present at"<<slow->data<<endl;
+            return slow;
+        }
+    }
+    return NULL;
+}
+
+Node* getStartingNode(Node* head){
+    if(head == NULL){
+        return NULL;
+    }
+    Node* intersection = floydDetectLoop(head);
+    Node* slow = head;
+    while(slow!=intersection){
+        slow = slow->next;
+        intersection = intersection->next;
+    }
+    return slow;
+}
+
+void removeLoop(Node* head){
+    if(head == NULL){
+        return;
+    }
+    Node* startOfLoop = getStartingNode(head);
+    Node* temp = startOfLoop;
+    while(temp->next!= startOfLoop){
+        temp = temp->next;
+    }
+    temp->next = NULL;
 }
 
 int main()
 {
-    Node*  tail = NULL;
-    insertNode(tail,5,3);
+    Node *tail = NULL;
+    insertNode(tail, 5, 3);
     print(tail);
 
-     insertNode(tail,3,5);
+    insertNode(tail, 3, 5);
     print(tail);
 
-     insertNode(tail,5,7);
+    insertNode(tail, 5, 7);
     print(tail);
 
-    insertNode(tail,7,9);
+    insertNode(tail, 7, 9);
     print(tail);
 
-     insertNode(tail,5,6);
+    insertNode(tail, 5, 6);
     print(tail);
 
-     insertNode(tail,3,4);
+    insertNode(tail, 3, 4);
     print(tail);
 
-    deleteNode(tail,3);
-    print(tail);
+    // deleteNode(tail,3);
+    // print(tail);
+
+    if(isCircularList(tail)){
+        cout<<"LL is circular in nature"<<endl;
+    }else{
+         cout<<"LL is not circular in nature"<<endl;
+    }
 
     return 0;
 }
